@@ -16,12 +16,12 @@ public class ClienteController {
     private final ClienteService clienteService;
 
     @GetMapping()
-    public List<Cliente> findAll() {
+    public List<Cliente> buscaClientes() {
         return clienteService.buscaClientes();
     }
 
     @GetMapping("/{codigo}")
-    public Cliente findById(@PathVariable Integer codigo) {
+    public Cliente buscaClientePeloCodigo(@PathVariable Integer codigo) {
         return clienteService.buscaCliente(codigo);
     }
 

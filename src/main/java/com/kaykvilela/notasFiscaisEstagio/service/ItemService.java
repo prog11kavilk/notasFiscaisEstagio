@@ -99,6 +99,7 @@ public class ItemService {
         Item item = new Item();
         item.setNota(nota);
         item.setProduto(produto);
+        item.setProdutoNome(produto.getNome());
         item.setQuantidade(quantidade);
         item.setValorUnitario(produto.getValor());
         item.calculaValorTotal();
@@ -109,8 +110,8 @@ public class ItemService {
     public ItemDTOResposta converteParaItemResponse(Item item) {
         return new ItemDTOResposta(
                 item.getCodigo(),
-                item.getProduto().getCodigo(),
-                item.getProduto().getNome(),
+//                item.getProduto().getCodigo(),
+                item.getProdutoNome(),
                 item.getValorUnitario(),
                 item.getQuantidade(),
                 item.getValorTotal());

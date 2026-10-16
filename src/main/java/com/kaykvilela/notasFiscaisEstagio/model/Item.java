@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.engine.internal.Cascade;
 
 import java.math.BigDecimal;
 
@@ -21,13 +22,17 @@ public class Item {
 
     // Vários itens podem usar o MESMO produto (em notas diferentes).
     @ManyToOne
-    @JoinColumn(name = "codigo_produto", nullable = false)
+    @JoinColumn(name = "codigo_produto", referencedColumnName ="codigo",nullable = false)
     private Produto produto;
 
 //     Vários itens pertencem a uma nota -> reconhece a chave estrangeira
     @ManyToOne
     @JoinColumn(name = "nota")
     private NotaFiscal nota;
+
+    // Nome do produto copiado no momento da venda (como o valor unitário, não muda se o produto mudar).
+    @Column(name = "produto_nome", nullable = false)
+    private String produtoNome;
 
     @Column(nullable = false)
     private Integer quantidade;

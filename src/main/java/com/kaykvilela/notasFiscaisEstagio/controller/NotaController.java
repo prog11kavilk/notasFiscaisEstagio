@@ -2,6 +2,7 @@ package com.kaykvilela.notasFiscaisEstagio.controller;
 
 import com.kaykvilela.notasFiscaisEstagio.DTO.NotaFiscalDTO;
 import com.kaykvilela.notasFiscaisEstagio.DTO.NotaFiscalResposta;
+import com.kaykvilela.notasFiscaisEstagio.DTO.NotaItemResposta;
 import com.kaykvilela.notasFiscaisEstagio.service.NotaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -17,23 +18,26 @@ public class NotaController {
     private final NotaService notaService;
 
     @GetMapping()
-    public List<NotaFiscalResposta> listar() {
+    @ResponseStatus(HttpStatus.OK)
+    public List<NotaItemResposta> listarTodasNotas() {
         return notaService.listarNotas();
     }
 
     @GetMapping("/{numeroNota}")
-    public NotaFiscalResposta buscarNota(@PathVariable Integer numeroNota) {
+    @ResponseStatus(HttpStatus.OK)
+    public List<NotaItemResposta> buscarNota(@PathVariable Integer numeroNota) {
         return notaService.devolveNota(numeroNota);
     }
 
     @PostMapping("/create")
     @ResponseStatus(HttpStatus.CREATED)
-    public NotaFiscalResposta criar(@RequestBody NotaFiscalDTO request) {
+    public NotaFiscalResposta criarNota(@RequestBody NotaFiscalDTO request) {
         return notaService.createNota(request);
     }
 
     @PutMapping("/update/{numeroNota}")
-    public NotaFiscalResposta atualizar(
+    @ResponseStatus(HttpStatus.OK)
+    public NotaFiscalResposta atualizarNota(
             @PathVariable Integer numeroNota,
             @RequestBody NotaFiscalDTO request) {
         return notaService.atualizarNota(numeroNota, request);

@@ -3,6 +3,7 @@ package com.kaykvilela.notasFiscaisEstagio.service;
 import com.kaykvilela.notasFiscaisEstagio.DTO.ItemDTORequest;
 import com.kaykvilela.notasFiscaisEstagio.DTO.ItemDTOResposta;
 import com.kaykvilela.notasFiscaisEstagio.DTO.NotaFiscalResposta;
+import com.kaykvilela.notasFiscaisEstagio.DTO.NotaItemResposta;
 import com.kaykvilela.notasFiscaisEstagio.DTO.NotaFiscalDTO;
 import com.kaykvilela.notasFiscaisEstagio.model.Cliente;
 import com.kaykvilela.notasFiscaisEstagio.model.Item;
@@ -42,19 +43,20 @@ public class NotaService {
                         HttpStatus.NOT_FOUND, "Nota não encontrada!\nID: " + codigo));
     }
 
-    //lista as notas já no formato que a API devolve
+    //lista todos os itens de todas as notas, uma linha por item
     @Transactional(readOnly = true)
-    public List<NotaFiscalResposta> listarNotas() {
-        List<NotaFiscalResposta> resposta = new ArrayList<>();
+    public List<NotaItemResposta> listarNotas() {
+        List<NotaItemResposta> resposta = new ArrayList<>();
         for (NotaFiscal nota : notaFiscalRepo.findAll()) {
-            resposta.add(converteEmNotaResponse(nota));
+            resposta.addAll(converteEmLinhasDeItens(nota));
         }
         return resposta;
     }
 
+    //devolve os itens de uma nota, uma linha por item
     @Transactional(readOnly = true)
-    public NotaFiscalResposta devolveNota(Integer numeroNota) {
-        return converteEmNotaResponse(buscaNota(numeroNota));
+    public List<NotaItemResposta> devolveNota(Integer numeroNota) {
+        return converteEmLinhasDeItens(buscaNota(numeroNota));
     }
 
     //cria a nota com o cliente e os itens informados
@@ -87,6 +89,22 @@ public class NotaService {
         notaFiscalRepo.delete(buscaNota(numeroNota));
     }
 
+    // uma linha por item: numero da nota, código do item, cliente_nome, produto, valor unitário, quantidade e valor total
+    private List<NotaItemResposta> converteEmLinhasDeItens(NotaFiscal nota) {
+        List<NotaItemResposta> linhas = new ArrayList<>();
+        for (Item item : nota.getItensNota()) {
+            linhas.add(new NotaItemResposta(
+                    nota.getNumeroNota(),
+                    item.getCodigo(),
+                    nota.getClienteNome(),
+                    item.getProdutoNome(),
+                    item.getValorUnitario(),
+                    item.getQuantidade(),
+                    item.getValorTotal()));
+        }
+        return linhas;
+    }
+
     // converte a NotaFiscal entidade em NotaFiscalDTO (cliente_nome e valor_total na nota)
     public NotaFiscalResposta converteEmNotaResponse(NotaFiscal nota) {
         List<ItemDTOResposta> itens = new ArrayList<>();
@@ -96,7 +114,7 @@ public class NotaService {
         return new NotaFiscalResposta(
                 nota.getNumeroNota(),
                 nota.getData(),
-                nota.getCliente().getCodigo(),
+//                nota.getCliente().getCodigo(),
                 nota.getClienteNome(),
                 itens,
                 nota.getValorTotal());

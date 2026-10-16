@@ -6,22 +6,23 @@ import com.kaykvilela.notasFiscaisEstagio.service.ItemService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
-
 @RestController
-@RequestMapping("/nf/itens")
 @RequiredArgsConstructor
+@RequestMapping("/nf/itens")
+
 public class ItemController {
 
     private final ItemService itemService;
 
     @GetMapping("/nota/{numeroNota}")
+    @ResponseStatus(HttpStatus.OK)
     public List<ItemDTOResposta> listarDaNota(@PathVariable Integer numeroNota) {
         return itemService.buscaItensDaNota(numeroNota);
     }
 
     @GetMapping("/item/{codigo}")
+    @ResponseStatus(HttpStatus.OK)
     public ItemDTOResposta listarItem(@PathVariable Integer codigo) {
         return itemService.buscaItem(codigo);
     }
@@ -34,6 +35,7 @@ public class ItemController {
     }
 
     @PutMapping("/update/{codigo}")
+    @ResponseStatus(HttpStatus.OK)
     public ItemDTOResposta atualizar(@PathVariable Integer codigo, @RequestBody ItemDTORequest item) {
         return itemService.atualizaQuantidade(codigo, item);
     }

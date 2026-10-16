@@ -6,7 +6,7 @@ import java.util.List;
 
 public record NotaFiscalResposta (Integer numeroNota,
                                  LocalDateTime data,
-                                 Integer clienteCodigo,
+//                                 Integer clienteCodigo,
                                  String clienteNome,
                                  List<ItemDTOResposta> itens,
                                  BigDecimal valorTotal){}

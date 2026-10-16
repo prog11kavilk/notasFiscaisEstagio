@@ -1,0 +1,602 @@
+{
+  "info": {
+    "name": "Notas Fiscais - roteiro de inserção",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Rode a coleção inteira na ordem (Runner). Ordem: clientes -> produtos -> notas -> itens -> conferência. Os codigos gerados são guardados em variáveis da coleção."
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    }
+  ],
+  "item": [
+    {
+      "name": "1 - Clientes  (tabela clientes)",
+      "description": "Corpo: nome e cpf (11 dígitos, único). Guarda o codigo em {{clienteXxxId}}.",
+      "item": [
+        {
+          "name": "POST cliente - Ana Souza",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 201', () => pm.response.to.have.status(201));",
+                  "const j = pm.response.json();",
+                  "pm.test('devolve codigo', () => pm.expect(j.codigo).to.be.a('number'));",
+                  "pm.collectionVariables.set('clienteAnaId', j.codigo);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/nf/clientes/create",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "nf",
+                "clientes",
+                "create"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Ana Souza\",\n  \"cpf\": \"52998224725\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "POST cliente - Bruno Lima",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 201', () => pm.response.to.have.status(201));",
+                  "const j = pm.response.json();",
+                  "pm.test('devolve codigo', () => pm.expect(j.codigo).to.be.a('number'));",
+                  "pm.collectionVariables.set('clienteBrunoId', j.codigo);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/nf/clientes/create",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "nf",
+                "clientes",
+                "create"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Bruno Lima\",\n  \"cpf\": \"11144477735\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "POST cliente - Carla Mendes",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 201', () => pm.response.to.have.status(201));",
+                  "const j = pm.response.json();",
+                  "pm.test('devolve codigo', () => pm.expect(j.codigo).to.be.a('number'));",
+                  "pm.collectionVariables.set('clienteCarlaId', j.codigo);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/nf/clientes/create",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "nf",
+                "clientes",
+                "create"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Carla Mendes\",\n  \"cpf\": \"39053344705\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2 - Produtos  (tabela produtos)",
+      "description": "Corpo: nome e valor. Guarda o codigo em {{produtoXxxId}}.",
+      "item": [
+        {
+          "name": "POST produto - Teclado Mecânico",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 201', () => pm.response.to.have.status(201));",
+                  "const j = pm.response.json();",
+                  "pm.test('devolve codigo', () => pm.expect(j.codigo).to.be.a('number'));",
+                  "pm.collectionVariables.set('produtoTecladoId', j.codigo);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/nf/produtos/create",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "nf",
+                "produtos",
+                "create"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Teclado Mecânico\",\n  \"valor\": 120.5\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "POST produto - Mouse Óptico",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 201', () => pm.response.to.have.status(201));",
+                  "const j = pm.response.json();",
+                  "pm.test('devolve codigo', () => pm.expect(j.codigo).to.be.a('number'));",
+                  "pm.collectionVariables.set('produtoMouseId', j.codigo);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/nf/produtos/create",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "nf",
+                "produtos",
+                "create"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Mouse Óptico\",\n  \"valor\": 50.0\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "POST produto - Monitor 24\"",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 201', () => pm.response.to.have.status(201));",
+                  "const j = pm.response.json();",
+                  "pm.test('devolve codigo', () => pm.expect(j.codigo).to.be.a('number'));",
+                  "pm.collectionVariables.set('produtoMonitorId', j.codigo);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/nf/produtos/create",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "nf",
+                "produtos",
+                "create"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Monitor 24\\\"\",\n  \"valor\": 899.9\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "POST produto - Headset USB",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 201', () => pm.response.to.have.status(201));",
+                  "const j = pm.response.json();",
+                  "pm.test('devolve codigo', () => pm.expect(j.codigo).to.be.a('number'));",
+                  "pm.collectionVariables.set('produtoHeadsetId', j.codigo);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/nf/produtos/create",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "nf",
+                "produtos",
+                "create"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Headset USB\",\n  \"valor\": 210.0\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3 - Notas fiscais  (tabelas nota_fiscal + itens)",
+      "description": "Corpo: clienteCodigo + itens[{produtoCodigo, quantidade}]. O valor unitário é copiado do produto; o total é calculado.",
+      "item": [
+        {
+          "name": "POST nota 1 - Ana: 2 teclados + 3 mouses",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 201', () => pm.response.to.have.status(201));",
+                  "const j = pm.response.json();",
+                  "pm.test('devolve numeroNota', () => pm.expect(j.numeroNota).to.be.a('number'));",
+                  "pm.collectionVariables.set('nota1', j.numeroNota);",
+                  "pm.test('total 391.00', () => pm.expect(j.valorTotal).to.eql(391.00));",
+                  "pm.test('2 itens', () => pm.expect(j.itens.length).to.eql(2));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/nf/nota_fiscal/create",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "nf",
+                "nota_fiscal",
+                "create"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"clienteCodigo\": \"{{clienteAnaId}}\",\n  \"itens\": [\n    {\n      \"produtoCodigo\": \"{{produtoTecladoId}}\",\n      \"quantidade\": 2\n    },\n    {\n      \"produtoCodigo\": \"{{produtoMouseId}}\",\n      \"quantidade\": 3\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "POST nota 2 - Bruno: 1 monitor + 2 headsets",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 201', () => pm.response.to.have.status(201));",
+                  "const j = pm.response.json();",
+                  "pm.test('devolve numeroNota', () => pm.expect(j.numeroNota).to.be.a('number'));",
+                  "pm.collectionVariables.set('nota2', j.numeroNota);",
+                  "pm.test('total 1319.90', () => pm.expect(j.valorTotal).to.eql(1319.90));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/nf/nota_fiscal/create",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "nf",
+                "nota_fiscal",
+                "create"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"clienteCodigo\": \"{{clienteBrunoId}}\",\n  \"itens\": [\n    {\n      \"produtoCodigo\": \"{{produtoMonitorId}}\",\n      \"quantidade\": 1\n    },\n    {\n      \"produtoCodigo\": \"{{produtoHeadsetId}}\",\n      \"quantidade\": 2\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "4 - Itens avulsos  (tabela itens)",
+      "description": "Adiciona item a uma nota existente; o total da nota é recalculado.",
+      "item": [
+        {
+          "name": "POST item na nota 1 - 1 headset",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 201', () => pm.response.to.have.status(201));",
+                  "const j = pm.response.json();",
+                  "pm.test('devolve codigo', () => pm.expect(j.codigo).to.be.a('number'));",
+                  "pm.collectionVariables.set('itemExtraId', j.codigo);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/nf/itens/create/{{nota1}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "nf",
+                "itens",
+                "create",
+                "{{nota1}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"produtoCodigo\": \"{{produtoHeadsetId}}\",\n  \"quantidade\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "5 - Conferência",
+      "description": "",
+      "item": [
+        {
+          "name": "GET nota 1 (3 linhas de item, soma 601.00)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 200', () => pm.response.to.have.status(200));",
+                  "const linhas = pm.response.json();",
+                  "pm.test('3 linhas (uma por item)', () => pm.expect(linhas.length).to.eql(3));",
+                  "pm.test('clienteNome Ana Souza em todas', () => pm.expect(linhas.every(l => l.clienteNome === 'Ana Souza')).to.be.true);",
+                  "const soma = linhas.reduce((s, l) => s + l.valorTotal, 0);",
+                  "pm.test('soma dos valorTotal = 601.00', () => pm.expect(Math.round(soma * 100)).to.eql(60100));",
+                  "pm.test('colunas esperadas', () => pm.expect(Object.keys(linhas[0])).to.have.members(['numeroNota','codigoItem','clienteNome','produtoNome','valorUnitario','quantidade','valorTotal']));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/nf/nota_fiscal/{{nota1}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "nf",
+                "nota_fiscal",
+                "{{nota1}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET itens da nota 1",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 200', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/nf/itens/nota/{{nota1}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "nf",
+                "itens",
+                "nota",
+                "{{nota1}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET todas as notas (uma linha por item)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 200', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/nf/nota_fiscal",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "nf",
+                "nota_fiscal"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

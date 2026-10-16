@@ -16,11 +16,13 @@ public class ProdutoController {
     private final ProdutoService produtoService;
 
     @GetMapping()
+    @ResponseStatus(HttpStatus.OK)
     public List<Produto> listar() {
         return produtoService.buscaProdutos();
     }
 
     @GetMapping("/{codigo}")
+    @ResponseStatus(HttpStatus.OK)
     public Produto buscar(@PathVariable Integer codigo) {
         return produtoService.buscaProduto(codigo);
     }
@@ -32,6 +34,7 @@ public class ProdutoController {
     }
 
     @PutMapping({"/update/{codigo}"})
+    @ResponseStatus(HttpStatus.OK)
     public Produto atualizar(
             @PathVariable Integer codigo,
             @RequestBody Produto produto) {

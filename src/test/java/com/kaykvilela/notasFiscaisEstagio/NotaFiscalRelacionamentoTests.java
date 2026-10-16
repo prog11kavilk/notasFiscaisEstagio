@@ -2,6 +2,7 @@ package com.kaykvilela.notasFiscaisEstagio;
 
 import com.kaykvilela.notasFiscaisEstagio.DTO.ItemDTORequest;
 import com.kaykvilela.notasFiscaisEstagio.DTO.ItemDTOResposta;
+import com.kaykvilela.notasFiscaisEstagio.DTO.NotaItemResposta;
 import com.kaykvilela.notasFiscaisEstagio.DTO.NotaFiscalDTO;
 import com.kaykvilela.notasFiscaisEstagio.DTO.NotaFiscalResposta;
 import com.kaykvilela.notasFiscaisEstagio.model.Cliente;
@@ -134,7 +135,7 @@ class NotaFiscalRelacionamentoTests {
         p.setValor(new BigDecimal("999.00"));
         sincroniza();
 
-        ItemDTOResposta item = notaService.devolveNota(criada.numeroNota()).itens().get(0);
+        NotaItemResposta item = notaService.devolveNota(criada.numeroNota()).get(0);
         assertEquals(0, new BigDecimal("120.50").compareTo(item.valorUnitario()));
     }
 
@@ -272,7 +273,7 @@ class NotaFiscalRelacionamentoTests {
         itemService.deletaItem(mouseItem.getCodigo());
         sincroniza();
         assertEquals(0, new BigDecimal("120.50").compareTo(notaRepo.findById(numero).orElseThrow().getValorTotal()));
-        assertEquals(0, new BigDecimal("120.50").compareTo(notaService.devolveNota(numero).valorTotal()));
+        assertEquals(0, new BigDecimal("120.50").compareTo(notaService.devolveNota(numero).get(0).valorTotal()));
     }
 
     @Test

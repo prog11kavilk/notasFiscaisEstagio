@@ -33,7 +33,7 @@ public class ClienteService {
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "Cliente não encontrado!\nID:"+codigo));
     }
-    //adiciona um cliente com as condições necessárias
+    //adiciona um cliente se o cpf dele não for duplicado
     @Transactional
     public Cliente addCliente(Cliente newClient) {
         validaCliente(newClient);
@@ -60,7 +60,6 @@ public class ClienteService {
             throw new ResponseStatusException(
                     HttpStatus.CONFLICT, "Já existe um cliente com esse CPF");
         }
-
         cliente.setNome(dados.getNome());
         cliente.setCpf(dados.getCpf());
         //o nome gravado nas notas do cliente acompanha a mudança
@@ -70,6 +69,7 @@ public class ClienteService {
         return clientesRepository.save(cliente);
     }
 
+    //remove o cliente pelo codigo
     @Transactional
     public void deletaCliente(Integer codigo) {
         Cliente cliente = buscaCliente(codigo);
