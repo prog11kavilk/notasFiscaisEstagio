@@ -18,8 +18,11 @@ public class Cliente {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "codigo", nullable = false)
-    private Integer codigo;
+    @Column(name = "id", nullable = false)
+    private Integer id;
+
+    @Column(unique = true, nullable = false)
+    private String codigo;
 
     @Column(name = "nome", nullable = false)
     private String nome;

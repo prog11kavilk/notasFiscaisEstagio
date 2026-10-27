@@ -1,0 +1,28 @@
+$kind: http-request
+name: 'POST nota 1002 - Bruno (monitor x1)'
+method: POST
+url: '{{baseUrl}}/nf/nota_fiscal/create'
+order: 2000
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "codigoNota": 1002,
+      "clienteCodigo": "C002",
+      "itens": [
+        {
+          "item": 3,
+          "produtoCodigo": "P003",
+          "quantidade": 1
+        }
+      ]
+    }
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status 201', () => pm.response.to.have.status(201));
+      pm.test('total 899.90', () => pm.expect(pm.response.json().valorTotal).to.eql(899.9));

@@ -1,0 +1,10 @@
+$kind: http-request
+name: 'GET cliente inexistente - 404'
+method: GET
+url: '{{baseUrl}}/nf/clientes/NAO'
+order: 3000
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status 404', () => pm.response.to.have.status(404));

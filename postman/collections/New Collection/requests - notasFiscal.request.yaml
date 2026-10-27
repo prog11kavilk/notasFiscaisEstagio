@@ -1,0 +1,14 @@
+$kind: http-request
+name: requests -> notasFiscal
+description: ""
+url: localhost:8080/nf/itens/create/1001
+method: POST
+body:
+  type: json
+  content: |-
+    {
+        "item": 10,
+        "produtoCodigo": "P001",
+        "quantidade": 2
+    }
+order: 1000

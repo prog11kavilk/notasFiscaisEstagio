@@ -1,0 +1,10 @@
+$kind: http-request
+name: 'DELETE nota 1001'
+method: DELETE
+url: '{{baseUrl}}/nf/nota_fiscal/delete/1001'
+order: 5000
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status 204', () => pm.response.to.have.status(204));

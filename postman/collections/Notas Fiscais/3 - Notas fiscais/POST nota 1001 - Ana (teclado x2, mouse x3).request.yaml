@@ -1,0 +1,36 @@
+$kind: http-request
+name: 'POST nota 1001 - Ana (teclado x2, mouse x3)'
+method: POST
+url: '{{baseUrl}}/nf/nota_fiscal/create'
+order: 1000
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "codigoNota": 1001,
+      "clienteCodigo": "C001",
+      "itens": [
+        {
+          "item": 1,
+          "produtoCodigo": "P001",
+          "quantidade": 2
+        },
+        {
+          "item": 2,
+          "produtoCodigo": "P002",
+          "quantidade": 3
+        }
+      ]
+    }
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status 201', () => pm.response.to.have.status(201));
+      const j = pm.response.json();
+      pm.test('codigoNota e cliente', () => { pm.expect(j.codigoNota).to.eql(1001); pm.expect(j.clienteCodigo).to.eql('C001'); pm.expect(j.clienteNome).to.eql('Ana Souza'); });
+      pm.test('total 391.00', () => pm.expect(j.valorTotal).to.eql(391));
+      pm.test('itens trazem o nome do produto', () => { pm.expect(j.itens[0].produtoNome).to.eql('Teclado Mecânico'); pm.expect(j.itens[1].produtoNome).to.eql('Mouse Óptico'); });

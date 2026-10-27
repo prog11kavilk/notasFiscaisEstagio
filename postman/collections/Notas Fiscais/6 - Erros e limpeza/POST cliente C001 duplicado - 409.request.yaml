@@ -1,0 +1,21 @@
+$kind: http-request
+name: 'POST cliente C001 duplicado - 409'
+method: POST
+url: '{{baseUrl}}/nf/clientes/create'
+order: 1000
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "codigo": "C001",
+      "nome": "Outro",
+      "cpf": "00000000000"
+    }
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status 409', () => pm.response.to.have.status(409));

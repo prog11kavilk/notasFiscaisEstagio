@@ -1,0 +1,23 @@
+$kind: http-request
+name: 'POST item 4 na nota 1001 (headset x1)'
+method: POST
+url: '{{baseUrl}}/nf/itens/create/1001'
+order: 1000
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "item": 4,
+      "produtoCodigo": "P004",
+      "quantidade": 1
+    }
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status 201', () => pm.response.to.have.status(201));
+      const j = pm.response.json();
+      pm.test('item com nome do produto', () => { pm.expect(j.item).to.eql(4); pm.expect(j.produtoCodigo).to.eql('P004'); pm.expect(j.produtoNome).to.eql('Headset USB'); pm.expect(j.valorTotal).to.eql(210); });

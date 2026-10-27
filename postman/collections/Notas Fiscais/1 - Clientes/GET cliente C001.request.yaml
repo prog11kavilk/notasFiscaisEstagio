@@ -1,0 +1,11 @@
+$kind: http-request
+name: 'GET cliente C001'
+method: GET
+url: '{{baseUrl}}/nf/clientes/C001'
+order: 5000
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status 200', () => pm.response.to.have.status(200));
+      pm.test('nome', () => pm.expect(pm.response.json().nome).to.eql('Ana Souza'));

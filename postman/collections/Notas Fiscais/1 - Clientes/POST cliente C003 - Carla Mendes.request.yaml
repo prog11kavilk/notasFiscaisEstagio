@@ -1,0 +1,22 @@
+$kind: http-request
+name: 'POST cliente C003 - Carla Mendes'
+method: POST
+url: '{{baseUrl}}/nf/clientes/create'
+order: 3000
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "codigo": "C003",
+      "nome": "Carla Mendes",
+      "cpf": "39053344705"
+    }
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status 201', () => pm.response.to.have.status(201));
+      pm.test('devolve codigo C003 e não expõe id', () => { const j = pm.response.json(); pm.expect(j.codigo).to.eql('C003'); pm.expect(j).to.not.have.property('id'); });

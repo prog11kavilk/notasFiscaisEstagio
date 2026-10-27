@@ -1,0 +1,13 @@
+$kind: http-request
+name: 'GET nota 1001 (uma linha por item)'
+method: GET
+url: '{{baseUrl}}/nf/nota_fiscal/1001'
+order: 1000
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status 200', () => pm.response.to.have.status(200));
+      const j = pm.response.json();
+      pm.test('3 linhas', () => pm.expect(j.length).to.eql(3));
+      pm.test('linha com codigoNota e codigoItem', () => { pm.expect(j[0].codigoNota).to.eql(1001); pm.expect(j[0]).to.have.property('codigoItem'); });

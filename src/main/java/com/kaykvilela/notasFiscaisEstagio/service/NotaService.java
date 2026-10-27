@@ -1,9 +1,6 @@
 package com.kaykvilela.notasFiscaisEstagio.service;
 
-import com.kaykvilela.notasFiscaisEstagio.DTO.ItemDTORequest;
-import com.kaykvilela.notasFiscaisEstagio.DTO.ItemDTOResposta;
-import com.kaykvilela.notasFiscaisEstagio.DTO.NotaFiscalResposta;
-import com.kaykvilela.notasFiscaisEstagio.DTO.NotaItemResposta;
+import com.kaykvilela.notasFiscaisEstagio.DTO.ItemDTO;
 import com.kaykvilela.notasFiscaisEstagio.DTO.NotaFiscalDTO;
 import com.kaykvilela.notasFiscaisEstagio.model.Cliente;
 import com.kaykvilela.notasFiscaisEstagio.model.Item;
@@ -16,9 +13,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -33,89 +33,98 @@ public class NotaService {
 
     @Transactional(readOnly = true)
     public List<NotaFiscal> buscaNotas() {
-        return notaFiscalRepo.findAll();
+        return notaFiscalRepo.findAllByOrderByCodigoNota();
     }
 
     @Transactional(readOnly = true)
-    public NotaFiscal buscaNota(Integer codigo) {
-        return notaFiscalRepo.findById(codigo)
+    public NotaFiscal buscarPeloCodigo(Integer codigoNota) {
+        return notaFiscalRepo.findByCodigoNota(codigoNota)
                 .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Nota não encontrada!\nID: " + codigo));
+                        HttpStatus.NOT_FOUND, "Nota não encontrada!\nCódigo: " + codigoNota));
     }
 
-    //lista todos os itens de todas as notas, uma linha por item
+    //lista todas as notas, cada uma com seus itens
     @Transactional(readOnly = true)
-    public List<NotaItemResposta> listarNotas() {
-        List<NotaItemResposta> resposta = new ArrayList<>();
-        for (NotaFiscal nota : notaFiscalRepo.findAll()) {
-            resposta.addAll(converteEmLinhasDeItens(nota));
-        }
-        return resposta;
+    public List<NotaFiscalDTO> listarNotas() {
+        return converteEmListaResponse(notaFiscalRepo.findAllByOrderByCodigoNota());
     }
 
-    //devolve os itens de uma nota, uma linha por item
+    //devolve uma nota com seus itens
     @Transactional(readOnly = true)
-    public List<NotaItemResposta> devolveNota(Integer numeroNota) {
-        return converteEmLinhasDeItens(buscaNota(numeroNota));
+    public NotaFiscalDTO devolveNota(Integer codigoNota) {
+        return converteEmNotaResponse(buscarPeloCodigo(codigoNota));
+    }
+
+    //devolve as notas do cliente com esse código; 404 se o cliente não existir
+    @Transactional(readOnly = true)
+    public List<NotaFiscalDTO> buscarNotaPeloCodigoCliente(String codigoCliente) {
+        buscaCliente(codigoCliente);
+        return converteEmListaResponse(notaFiscalRepo.findByClienteCodigoOrderByCodigoNota(codigoCliente));
+    }
+
+    //devolve as notas dos clientes cujo nome contém o texto informado (sem diferenciar maiúsculas)
+    @Transactional(readOnly = true)
+    public List<NotaFiscalDTO> buscarNotaPeloNomeCliente(String nomeCliente) {
+        return converteEmListaResponse(notaFiscalRepo.findByClienteNomeContainingIgnoreCaseOrderByCodigoNota(nomeCliente));
     }
 
     //cria a nota com o cliente e os itens informados
     @Transactional
-    public NotaFiscalResposta createNota(NotaFiscalDTO request) {
+    public NotaFiscalDTO createNota(NotaFiscalDTO request) {
         validaNotaFiscal(request);
+        if (request.codigoNota() == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Informe o código da nota");
+        }
+        if (notaFiscalRepo.existsByCodigoNota(request.codigoNota())) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Já existe uma nota com esse código");
+        }
         NotaFiscal nota = new NotaFiscal();
+        nota.setCodigoNota(request.codigoNota());
         nota.setData(LocalDateTime.now());
         nota.setCliente(buscaCliente(request.clienteCodigo()));
         preencheItens(nota, request.itens());
-        nota.atualizaTotais();
+        atualizaTotais(nota);
         return converteEmNotaResponse(notaFiscalRepo.save(nota));
     }
 
     //troca o cliente e substitui todos os itens da nota
     @Transactional
-    public NotaFiscalResposta atualizarNota(Integer numeroNota, NotaFiscalDTO request) {
-        NotaFiscal nota = buscaNota(numeroNota);
+    public NotaFiscalDTO atualizarNota(Integer codigoNota, NotaFiscalDTO request) {
+        NotaFiscal nota = buscarPeloCodigo(codigoNota);
         validaNotaFiscal(request);
         nota.setCliente(buscaCliente(request.clienteCodigo()));
         nota.getItensNota().clear(); // orphanRemoval apaga os antigos
+        notaFiscalRepo.flush(); // apaga antes de inserir, senão o código dos itens novos colide com os antigos
         preencheItens(nota, request.itens());
-        nota.atualizaTotais();
+        atualizaTotais(nota);
         return converteEmNotaResponse(notaFiscalRepo.saveAndFlush(nota));
     }
 
     //apaga a nota e, em cascata, os itens
     @Transactional
-    public void excluirNota(Integer numeroNota) {
-        notaFiscalRepo.delete(buscaNota(numeroNota));
+    public void excluirNota(Integer codigoNota) {
+        notaFiscalRepo.delete(buscarPeloCodigo(codigoNota));
     }
 
-    // uma linha por item: numero da nota, código do item, cliente_nome, produto, valor unitário, quantidade e valor total
-    private List<NotaItemResposta> converteEmLinhasDeItens(NotaFiscal nota) {
-        List<NotaItemResposta> linhas = new ArrayList<>();
-        for (Item item : nota.getItensNota()) {
-            linhas.add(new NotaItemResposta(
-                    nota.getNumeroNota(),
-                    item.getCodigo(),
-                    nota.getClienteNome(),
-                    item.getProdutoNome(),
-                    item.getValorUnitario(),
-                    item.getQuantidade(),
-                    item.getValorTotal()));
+    private List<NotaFiscalDTO> converteEmListaResponse(List<NotaFiscal> notas) {
+        List<NotaFiscalDTO> resposta = new ArrayList<>();
+        for (NotaFiscal nota : notas) {
+            resposta.add(converteEmNotaResponse(nota));
         }
-        return linhas;
+        return resposta;
     }
 
     // converte a NotaFiscal entidade em NotaFiscalDTO (cliente_nome e valor_total na nota)
-    public NotaFiscalResposta converteEmNotaResponse(NotaFiscal nota) {
-        List<ItemDTOResposta> itens = new ArrayList<>();
+    public NotaFiscalDTO converteEmNotaResponse(NotaFiscal nota) {
+        List<ItemDTO> itens = new ArrayList<>();
         for (Item item : nota.getItensNota()) {
             itens.add(itemService.converteParaItemResponse(item));
         }
-        return new NotaFiscalResposta(
-                nota.getNumeroNota(),
+        return new NotaFiscalDTO(
+                nota.getCodigoNota(),
                 nota.getData(),
-//                nota.getCliente().getCodigo(),
-                nota.getClienteNome(),
+                nota.getCliente().getCodigo(),
+                nota.getCliente().getNome(),
                 itens,
                 nota.getValorTotal());
     }
@@ -129,17 +138,30 @@ public class NotaService {
         }
     }
 
-    private Cliente buscaCliente(Integer codigo) {
-        return clienteRepo.findById(codigo)
+    private Cliente buscaCliente(String codigo) {
+        return clienteRepo.findByCodigo(codigo)
                 .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Cliente não encontrado!\nID:" + codigo));
+                        HttpStatus.NOT_FOUND, "Cliente não encontrado!\nCódigo: " + codigo));
     }
 
-    private void preencheItens(NotaFiscal nota, List<ItemDTORequest> itensRequest) {
+    private void preencheItens(NotaFiscal nota, List<ItemDTO> itensRequest) {
         List<Item> itens  = nota.getItensNota();
-        for (ItemDTORequest dto : itensRequest) {
-            itens.add( itemService.montaItem(nota, dto.produtoCodigo(), dto.quantidade()));
+        Set<Integer> codigos = new HashSet<>();
+        for (ItemDTO dto : itensRequest) {
+            if (!codigos.add(dto.item())) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Código de item repetido na nota: " + dto.item());
+            }
+            itens.add(itemService.montaItem(nota, dto.item(), dto.produtoCodigo(), dto.quantidade()));
         }
         nota.setItensNota(itens);
+    }
+
+    // refaz o valor total da somando o valor dos itens presentes nela
+    public void atualizaTotais(NotaFiscal nota) {
+        BigDecimal total = BigDecimal.ZERO;
+        for (Item item : nota.getItensNota()) {
+            total = total.add(item.getValorTotal());
+        }
+        nota.setValorTotal(total);
     }
 }

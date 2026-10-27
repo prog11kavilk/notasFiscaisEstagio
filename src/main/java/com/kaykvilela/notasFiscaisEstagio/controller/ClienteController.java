@@ -1,6 +1,6 @@
 package com.kaykvilela.notasFiscaisEstagio.controller;
 
-import com.kaykvilela.notasFiscaisEstagio.model.Cliente;
+import com.kaykvilela.notasFiscaisEstagio.DTO.ClienteDTO;
 import com.kaykvilela.notasFiscaisEstagio.service.ClienteService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -16,31 +16,31 @@ public class ClienteController {
     private final ClienteService clienteService;
 
     @GetMapping()
-    public List<Cliente> buscaClientes() {
+    public List<ClienteDTO> buscaClientes() {
         return clienteService.buscaClientes();
     }
 
     @GetMapping("/{codigo}")
-    public Cliente buscaClientePeloCodigo(@PathVariable Integer codigo) {
-        return clienteService.buscaCliente(codigo);
+    public ClienteDTO buscarPeloCodigo(@PathVariable String codigo) {
+        return clienteService.buscarPeloCodigo(codigo);
     }
 
     @PostMapping("/create")
     @ResponseStatus(HttpStatus.CREATED)
-    public Cliente saveCliente(@RequestBody Cliente cliente) {
+    public ClienteDTO saveCliente(@RequestBody ClienteDTO cliente) {
         return clienteService.addCliente(cliente);
     }
 
     @PutMapping("/update/{codigo}")
-    public Cliente updateCliente(
-            @PathVariable Integer codigo,
-            @RequestBody Cliente cliente) {
+    public ClienteDTO updateCliente(
+            @PathVariable String codigo,
+            @RequestBody ClienteDTO cliente) {
         return clienteService.atualizaCliente(codigo, cliente);
     }
 
     @DeleteMapping({ "/delete/{codigo}"})
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteCliente(@PathVariable Integer codigo) {
+    public void deleteCliente(@PathVariable String codigo) {
         clienteService.deletaCliente(codigo);
     }
 }

@@ -1,0 +1,10 @@
+$kind: http-request
+name: 'DELETE produto P002'
+method: DELETE
+url: '{{baseUrl}}/nf/produtos/delete/P002'
+order: 11000
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status 204', () => pm.response.to.have.status(204));

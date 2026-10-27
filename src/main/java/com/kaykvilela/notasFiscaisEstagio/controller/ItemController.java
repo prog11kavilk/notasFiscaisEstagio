@@ -1,7 +1,6 @@
 package com.kaykvilela.notasFiscaisEstagio.controller;
 
-import com.kaykvilela.notasFiscaisEstagio.DTO.ItemDTORequest;
-import com.kaykvilela.notasFiscaisEstagio.DTO.ItemDTOResposta;
+import com.kaykvilela.notasFiscaisEstagio.DTO.ItemDTO;
 import com.kaykvilela.notasFiscaisEstagio.service.ItemService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -15,28 +14,27 @@ public class ItemController {
 
     private final ItemService itemService;
 
-    @GetMapping("/nota/{numeroNota}")
+    @GetMapping("/nota/{codigoNota}")
     @ResponseStatus(HttpStatus.OK)
-    public List<ItemDTOResposta> listarDaNota(@PathVariable Integer numeroNota) {
-        return itemService.buscaItensDaNota(numeroNota);
+    public List<ItemDTO> listarDaNota(@PathVariable Integer codigoNota) {
+        return itemService.buscaItensDaNota(codigoNota);
     }
 
     @GetMapping("/item/{codigo}")
     @ResponseStatus(HttpStatus.OK)
-    public ItemDTOResposta listarItem(@PathVariable Integer codigo) {
-        return itemService.buscaItem(codigo);
+    public ItemDTO buscarPeloCodigo(@PathVariable Integer codigo) {
+        return itemService.buscarPeloCodigo(codigo);
     }
 
-    // corpo: {"produtoCodigo":1,"quantidade":2}
-    @PostMapping("/create/{numeroNota}")
+    @PostMapping("/create/{codigoNota}")
     @ResponseStatus(HttpStatus.CREATED)
-    public ItemDTOResposta criar(@PathVariable Integer numeroNota, @RequestBody ItemDTORequest item) {
-        return itemService.addItem(numeroNota, item);
+    public ItemDTO criar(@PathVariable Integer codigoNota, @RequestBody ItemDTO item) {
+        return itemService.addItem(codigoNota, item);
     }
 
     @PutMapping("/update/{codigo}")
     @ResponseStatus(HttpStatus.OK)
-    public ItemDTOResposta atualizar(@PathVariable Integer codigo, @RequestBody ItemDTORequest item) {
+    public ItemDTO atualizar(@PathVariable Integer codigo, @RequestBody ItemDTO item) {
         return itemService.atualizaQuantidade(codigo, item);
     }
 

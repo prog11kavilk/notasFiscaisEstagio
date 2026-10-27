@@ -1,0 +1,6 @@
+$kind: collection
+name: Notas Fiscais
+description: 'Rode na ordem (Runner): clientes, produtos, notas, itens, conferência e limpeza. Todos os recursos são identificados pelo código informado no corpo, não pelo id interno.'
+variables:
+  - key: baseUrl
+    value: 'http://localhost:8080'

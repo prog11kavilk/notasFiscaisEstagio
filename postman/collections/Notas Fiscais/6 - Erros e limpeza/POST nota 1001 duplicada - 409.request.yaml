@@ -1,0 +1,27 @@
+$kind: http-request
+name: 'POST nota 1001 duplicada - 409'
+method: POST
+url: '{{baseUrl}}/nf/nota_fiscal/create'
+order: 2000
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "codigoNota": 1001,
+      "clienteCodigo": "C001",
+      "itens": [
+        {
+          "item": 90,
+          "produtoCodigo": "P001",
+          "quantidade": 1
+        }
+      ]
+    }
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status 409', () => pm.response.to.have.status(409));

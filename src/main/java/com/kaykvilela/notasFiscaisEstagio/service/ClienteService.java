@@ -1,9 +1,8 @@
 package com.kaykvilela.notasFiscaisEstagio.service;
 
+import com.kaykvilela.notasFiscaisEstagio.DTO.ClienteDTO;
 import com.kaykvilela.notasFiscaisEstagio.model.Cliente;
-import com.kaykvilela.notasFiscaisEstagio.model.NotaFiscal;
 import com.kaykvilela.notasFiscaisEstagio.repository.IClienteRepository;
-import com.kaykvilela.notasFiscaisEstagio.repository.INotaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -18,61 +17,62 @@ import java.util.List;
 public class ClienteService {
 
     private final IClienteRepository clientesRepository;
-    private final INotaRepository notaRepository;
 
     //aponta todos os clientes do banco
     @Transactional(readOnly = true)
-    public List<Cliente> buscaClientes() {
-        return clientesRepository.findAll();
+    public List<ClienteDTO> buscaClientes() {
+        return clientesRepository.findAll().stream().map(this::converteParaDTO).toList();
     }
 
     //busca um cliente em específico pelo seu código
     @Transactional(readOnly = true)
-    public Cliente buscaCliente(Integer codigo) {
-        return clientesRepository.findById(codigo)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Cliente não encontrado!\nID:"+codigo));
+    public ClienteDTO buscarPeloCodigo(String codigo) {
+        return converteParaDTO(buscaEntidade(codigo));
     }
-    //adiciona um cliente se o cpf dele não for duplicado
-    @Transactional
-    public Cliente addCliente(Cliente newClient) {
-        validaCliente(newClient);
 
-        if (clientesRepository.existsByCpf(newClient.getCpf())) {
+    //adiciona um cliente se o código e o cpf dele não forem duplicados
+    @Transactional
+    public ClienteDTO addCliente(ClienteDTO dados) {
+        validaCliente(dados);
+        if (dados.codigo() == null || dados.codigo().isBlank()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Informe o código do cliente");
+        }
+        if (clientesRepository.existsByCodigo(dados.codigo())) {
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT, "Já existe um cliente com esse código");
+        }
+        if (clientesRepository.existsByCpf(dados.cpf())) {
             throw new ResponseStatusException(
                     HttpStatus.CONFLICT, "Já existe um cliente com esse CPF");
         }
 
         Cliente cliente = Cliente.builder()
-                .nome(newClient.getNome())
-                .cpf(newClient.getCpf())
+                .codigo(dados.codigo())
+                .nome(dados.nome())
+                .cpf(dados.cpf())
                 .build();
-        return clientesRepository.save(cliente);
+        return converteParaDTO(clientesRepository.save(cliente));
     }
 
-    //atualiza os dados de um cliente cadastrado
+    //atualiza nome e cpf de um cliente cadastrado (o código não muda)
     @Transactional
-    public Cliente atualizaCliente(Integer codigo, Cliente dados) {
-        Cliente cliente = buscaCliente(codigo);
+    public ClienteDTO atualizaCliente(String codigo, ClienteDTO dados) {
+        Cliente cliente = buscaEntidade(codigo);
         validaCliente(dados);
 
-        if (!dados.getCpf().equals(cliente.getCpf()) && clientesRepository.existsByCpf(dados.getCpf())) {
+        if (!dados.cpf().equals(cliente.getCpf()) && clientesRepository.existsByCpf(dados.cpf())) {
             throw new ResponseStatusException(
                     HttpStatus.CONFLICT, "Já existe um cliente com esse CPF");
         }
-        cliente.setNome(dados.getNome());
-        cliente.setCpf(dados.getCpf());
-        //o nome gravado nas notas do cliente acompanha a mudança
-        for (NotaFiscal nota : notaRepository.findByClienteCodigo(codigo)) {
-            nota.setClienteNome(cliente.getNome());
-        }
-        return clientesRepository.save(cliente);
+        cliente.setNome(dados.nome());
+        cliente.setCpf(dados.cpf());
+        return converteParaDTO(clientesRepository.save(cliente));
     }
 
     //remove o cliente pelo codigo
     @Transactional
-    public void deletaCliente(Integer codigo) {
-        Cliente cliente = buscaCliente(codigo);
+    public void deletaCliente(String codigo) {
+        Cliente cliente = buscaEntidade(codigo);
         try {
             clientesRepository.delete(cliente);
             clientesRepository.flush();
@@ -83,10 +83,20 @@ public class ClienteService {
         }
     }
 
+    private ClienteDTO converteParaDTO(Cliente cliente) {
+        return new ClienteDTO(cliente.getCodigo(), cliente.getNome(), cliente.getCpf());
+    }
+
+    private Cliente buscaEntidade(String codigo) {
+        return clientesRepository.findByCodigo(codigo)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Cliente não encontrado!\nCódigo: " + codigo));
+    }
+
     //nome e CPF são obrigatórios
-    private void validaCliente(Cliente cliente) {
-        if (cliente == null || cliente.getNome() == null || cliente.getNome().isBlank()
-                || cliente.getCpf() == null || cliente.getCpf().isBlank()) {
+    private void validaCliente(ClienteDTO cliente) {
+        if (cliente == null || cliente.nome() == null || cliente.nome().isBlank()
+                || cliente.cpf() == null || cliente.cpf().isBlank()) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST, "Informe nome e CPF do cliente");
         }

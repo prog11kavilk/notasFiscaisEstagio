@@ -1,0 +1,10 @@
+$kind: http-request
+name: 'DELETE cliente C001'
+method: DELETE
+url: '{{baseUrl}}/nf/clientes/delete/C001'
+order: 7000
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status 204', () => pm.response.to.have.status(204));

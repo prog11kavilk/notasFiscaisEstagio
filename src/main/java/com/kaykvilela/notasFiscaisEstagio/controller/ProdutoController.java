@@ -1,6 +1,6 @@
 package com.kaykvilela.notasFiscaisEstagio.controller;
 
-import com.kaykvilela.notasFiscaisEstagio.model.Produto;
+import com.kaykvilela.notasFiscaisEstagio.DTO.ProdutoDTO;
 import com.kaykvilela.notasFiscaisEstagio.service.ProdutoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -17,33 +17,33 @@ public class ProdutoController {
 
     @GetMapping()
     @ResponseStatus(HttpStatus.OK)
-    public List<Produto> listar() {
+    public List<ProdutoDTO> listar() {
         return produtoService.buscaProdutos();
     }
 
     @GetMapping("/{codigo}")
     @ResponseStatus(HttpStatus.OK)
-    public Produto buscar(@PathVariable Integer codigo) {
-        return produtoService.buscaProduto(codigo);
+    public ProdutoDTO buscarPeloCodigo(@PathVariable String codigo) {
+        return produtoService.buscarPeloCodigo(codigo);
     }
 
     @PostMapping({"/create"})
     @ResponseStatus(HttpStatus.CREATED)
-    public Produto criar(@RequestBody Produto produto) {
+    public ProdutoDTO criar(@RequestBody ProdutoDTO produto) {
         return produtoService.criaProduto(produto);
     }
 
     @PutMapping({"/update/{codigo}"})
     @ResponseStatus(HttpStatus.OK)
-    public Produto atualizar(
-            @PathVariable Integer codigo,
-            @RequestBody Produto produto) {
+    public ProdutoDTO atualizar(
+            @PathVariable String codigo,
+            @RequestBody ProdutoDTO produto) {
         return produtoService.atualizaProduto(codigo, produto);
     }
 
     @DeleteMapping({"/delete/{codigo}"})
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void excluir(@PathVariable Integer codigo) {
+    public void excluir(@PathVariable String codigo) {
         produtoService.deletaProduto(codigo);
     }
 }

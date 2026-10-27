@@ -5,9 +5,14 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ItemRepository extends JpaRepository<Item, Integer> {
-    //busca item pelo número da nota
-    List<Item> findByNotaNumeroNota(Integer numeroNota);
+    //busca os itens pelo código da nota
+    List<Item> findByNotaCodigoNota(Integer codigoNota);
+
+    boolean existsByItem(Integer item);
+
+    Optional<Item> findByItem(Integer item);
 }

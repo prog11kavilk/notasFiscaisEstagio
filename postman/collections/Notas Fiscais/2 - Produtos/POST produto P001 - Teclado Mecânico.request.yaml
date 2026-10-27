@@ -1,0 +1,22 @@
+$kind: http-request
+name: 'POST produto P001 - Teclado Mecânico'
+method: POST
+url: '{{baseUrl}}/nf/produtos/create'
+order: 1000
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "codigo": "P001",
+      "nome": "Teclado Mecânico",
+      "valor": 120.5
+    }
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('status 201', () => pm.response.to.have.status(201));
+      pm.test('devolve codigo P001', () => pm.expect(pm.response.json().codigo).to.eql('P001'));

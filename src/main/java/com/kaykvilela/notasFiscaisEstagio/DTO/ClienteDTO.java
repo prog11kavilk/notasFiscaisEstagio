@@ -1,4 +1,7 @@
 package com.kaykvilela.notasFiscaisEstagio.DTO;
 
-public record ClienteDTO (String nome, String cpf){
+// usado na requisição e na resposta de cliente
+public record ClienteDTO(String codigo,
+                         String nome,
+                         String cpf) {
 }
