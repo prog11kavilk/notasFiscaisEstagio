@@ -140,10 +140,10 @@ As notas são listadas em ordem crescente de `codigoNota`, e os itens de cada no
 | Método | Endpoint | Ação |
 |---|---|---|
 | GET | `/nf/itens/nota/{codigoNota}` | Itens de uma nota (404 se a nota não existir) |
-| GET | `/nf/itens/item/{codigo}` | Buscar um item pelo código |
+| GET | `/nf/itens/nota/{codigoNota}/item/{codigo}` | Buscar um item pela nota e pelo código do item |
 | POST | `/nf/itens/create/{codigoNota}` | Adicionar item a uma nota existente |
-| PUT | `/nf/itens/update/{codigo}` | Alterar apenas a quantidade |
-| DELETE | `/nf/itens/delete/{codigo}` | Remover item (a nota deve manter ao menos um) |
+| PUT | `/nf/itens/nota/{codigoNota}/update/{codigo}` | Alterar apenas a quantidade |
+| DELETE | `/nf/itens/nota/{codigoNota}/delete/{codigo}` | Remover item (a nota deve manter ao menos um) |
 
 Criação: `{ "item": 3, "produtoCodigo": "P1", "quantidade": 2 }`. Atualização: `{ "quantidade": 5 }`. A quantidade deve ser maior que zero.
 

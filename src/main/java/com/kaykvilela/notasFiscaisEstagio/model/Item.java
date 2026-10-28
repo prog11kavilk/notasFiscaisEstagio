@@ -8,7 +8,9 @@ import lombok.Setter;
 import java.math.BigDecimal;
 
 @Entity
-@Table(name = "itens")
+// o número do item é único só dentro da nota; notas diferentes podem repetir o mesmo número
+@Table(name = "itens",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"nota", "item"}))
 @Getter
 @Setter
 @NoArgsConstructor
@@ -19,7 +21,7 @@ public class Item {
     @Column(name = "id")
     private Integer id;
 
-    @Column(name="item", unique = true, nullable = false)
+    @Column(name="item", nullable = false)
     private Integer item;
 
     // Vários itens podem usar o MESMO produto (em notas diferentes).

@@ -20,10 +20,10 @@ public class ItemController {
         return itemService.buscaItensDaNota(codigoNota);
     }
 
-    @GetMapping("/item/{codigo}")
+    @GetMapping("/nota/{codigoNota}/item/{codigo}")
     @ResponseStatus(HttpStatus.OK)
-    public ItemDTO buscarPeloCodigo(@PathVariable Integer codigo) {
-        return itemService.buscarPeloCodigo(codigo);
+    public ItemDTO buscarPeloCodigo(@PathVariable Integer codigoNota, @PathVariable Integer codigo) {
+        return itemService.buscarPeloCodigo(codigoNota, codigo);
     }
 
     @PostMapping("/create/{codigoNota}")
@@ -32,15 +32,15 @@ public class ItemController {
         return itemService.addItem(codigoNota, item);
     }
 
-    @PutMapping("/update/{codigo}")
+    @PutMapping("/nota/{codigoNota}/update/{codigo}")
     @ResponseStatus(HttpStatus.OK)
-    public ItemDTO atualizar(@PathVariable Integer codigo, @RequestBody ItemDTO item) {
-        return itemService.atualizaQuantidade(codigo, item);
+    public ItemDTO atualizar(@PathVariable Integer codigoNota, @PathVariable Integer codigo, @RequestBody ItemDTO item) {
+        return itemService.atualizaQuantidade(codigoNota, codigo, item);
     }
 
-    @DeleteMapping("/delete/{codigo}")
+    @DeleteMapping("/nota/{codigoNota}/delete/{codigo}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void excluir(@PathVariable Integer codigo) {
-        itemService.deletaItem(codigo);
+    public void excluir(@PathVariable Integer codigoNota, @PathVariable Integer codigo) {
+        itemService.deletaItem(codigoNota, codigo);
     }
 }

@@ -47,10 +47,10 @@ public class ItemService {
         return itensResposta;
     }
 
-    //busca um item pelo seu código
+    //busca um item pelo código da nota e pelo código do item
     @Transactional(readOnly = true)
-    public ItemDTO buscarPeloCodigo(Integer codigoItem) {
-        return converteParaItemResponse(buscaEntidadeItem(codigoItem));
+    public ItemDTO buscarPeloCodigo(Integer codigoNota, Integer codigoItem) {
+        return converteParaItemResponse(buscaEntidadeItem(codigoNota, codigoItem));
     }
 
     // adiciona um item numa nota que já existe
@@ -69,8 +69,8 @@ public class ItemService {
 
     // muda só a quantidade de um item
     @Transactional
-    public ItemDTO atualizaQuantidade(Integer codigoItem, ItemDTO dados) {
-        Item item = buscaEntidadeItem(codigoItem);
+    public ItemDTO atualizaQuantidade(Integer codigoNota, Integer codigoItem, ItemDTO dados) {
+        Item item = buscaEntidadeItem(codigoNota, codigoItem);
         validaQuantidade(dados == null ? null : dados.quantidade());
         item.setQuantidade(dados.quantidade());
         calculaValorTotal(item);
@@ -80,8 +80,8 @@ public class ItemService {
 
     // remove um item da nota
     @Transactional
-    public void deletaItem(Integer codigoItem) {
-        Item item = buscaEntidadeItem(codigoItem);
+    public void deletaItem(Integer codigoNota, Integer codigoItem) {
+        Item item = buscaEntidadeItem(codigoNota, codigoItem);
         NotaFiscal nota = item.getNota();
         if (nota.getItensNota().size() == 1) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
@@ -96,8 +96,8 @@ public class ItemService {
         if (codigoItem == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Informe o código do item");
         }
-        if (itemRepo.existsByItem(codigoItem)) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Já existe um item com esse código");
+        if (itemRepo.existsByNotaCodigoNotaAndItem(nota.getCodigoNota(), codigoItem)) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Já existe um item com esse código nesta nota");
         }
         if (codigoProduto == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Informe o código do produto do item");
@@ -132,10 +132,10 @@ public class ItemService {
                 item.getValorTotal());
     }
 
-    private Item buscaEntidadeItem(Integer codigoItem) {
-        return itemRepo.findByItem(codigoItem)
+    private Item buscaEntidadeItem(Integer codigoNota, Integer codigoItem) {
+        return itemRepo.findByNotaCodigoNotaAndItem(codigoNota, codigoItem)
                 .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Item não encontrado!\nCódigo: " + codigoItem));
+                        HttpStatus.NOT_FOUND, "Item não encontrado!\nNota: " + codigoNota + " / Item: " + codigoItem));
     }
 
     private void validaQuantidade(Integer quantidade) {

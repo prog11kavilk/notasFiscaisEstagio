@@ -1,7 +1,7 @@
 $kind: http-request
 name: 'PUT item 4 - quantidade 2'
 method: PUT
-url: '{{baseUrl}}/nf/itens/update/4'
+url: '{{baseUrl}}/nf/itens/nota/1001/update/4'
 order: 2000
 headers:
   - key: Content-Type

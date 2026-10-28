@@ -1,7 +1,7 @@
 $kind: http-request
 name: 'GET item 4'
 method: GET
-url: '{{baseUrl}}/nf/itens/item/4'
+url: '{{baseUrl}}/nf/itens/nota/1001/item/4'
 order: 3000
 scripts:
   - type: afterResponse

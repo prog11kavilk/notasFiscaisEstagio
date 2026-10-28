@@ -12,7 +12,7 @@ public interface ItemRepository extends JpaRepository<Item, Integer> {
     //busca os itens pelo código da nota
     List<Item> findByNotaCodigoNota(Integer codigoNota);
 
-    boolean existsByItem(Integer item);
+    boolean existsByNotaCodigoNotaAndItem(Integer codigoNota, Integer item);
 
-    Optional<Item> findByItem(Integer item);
+    Optional<Item> findByNotaCodigoNotaAndItem(Integer codigoNota, Integer item);
 }
