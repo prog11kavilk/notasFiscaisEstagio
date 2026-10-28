@@ -11,7 +11,7 @@ O modelo é composto por quatro entidades. Cada uma possui um identificador inte
 | Cliente | `clientes` | `codigo` (texto, único), `nome`, `cpf` (único) |
 | Produto | `produtos` | `codigo` (texto, único), `nome`, `valor` |
 | NotaFiscal | `nota_fiscal` | `codigo_nota` (inteiro, único), `data`, `valor_total`, cliente |
-| Item | `itens` | `item` (inteiro, único), `quantidade`, `valor_total` (subtotal do item), nota, produto |
+| Item | `itens` | `item` (inteiro, único dentro da nota), `quantidade`, `valor_total` (subtotal do item), nota, produto |
 
 **Relacionamentos:** um cliente possui várias notas; uma nota possui vários itens; um produto pode aparecer em vários itens.
 
@@ -22,7 +22,7 @@ O modelo é composto por quatro entidades. Cada uma possui um identificador inte
 - Uma nota deve conter pelo menos um item; por isso, o último item de uma nota não pode ser removido.
 - Ao excluir uma nota, seus itens também são excluídos.
 - Um cliente com notas, ou um produto presente em itens, não pode ser excluído (erro 409).
-- Os códigos de nota e de item são únicos em todo o banco, e não apenas dentro de uma nota.
+- O código da nota é único em todo o banco. O código do item é único apenas dentro de cada nota, então notas diferentes podem repetir o mesmo número de item.
 
 ## Execução do projeto
 
@@ -149,10 +149,12 @@ Criação: `{ "item": 3, "produtoCodigo": "P1", "quantidade": 2 }`. Atualizaçã
 
 ## Consultas SQL
 
-O arquivo `src/main/resources/queries.sql` contém duas consultas que reproduzem diretamente no banco o conteúdo devolvido pela API:
+O arquivo `src/main/resources/queries.sql` contém três consultas. As duas primeiras reproduzem diretamente no banco o conteúdo devolvido pela API:
 
 1. a nota em formato tabular, com uma linha por item;
 2. a nota no formato do `NotaFiscalDTO`, com uma linha por nota e os itens agrupados em JSON (`json_agg`).
+
+A terceira é uma conferência: lista os números de item que aparecem em mais de uma nota.
 
 Como `nota_fiscal.cliente_codigo` e `itens.codigo_produto` armazenam o `id` numérico das chaves estrangeiras, e não o código de texto, as junções utilizam `clientes.id` e `produtos.id`.
 
