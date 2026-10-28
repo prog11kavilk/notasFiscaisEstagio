@@ -22,7 +22,6 @@ public class Item {
     @Column(name="item", unique = true, nullable = false)
     private Integer item;
 
-
     // Vários itens podem usar o MESMO produto (em notas diferentes).
     @ManyToOne
     @JoinColumn(name = "codigo_produto", nullable = false)
