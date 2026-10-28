@@ -33,45 +33,29 @@ O modelo é composto por quatro entidades. Cada uma possui um identificador inte
 
 ### 1. Banco de dados no Docker
 
-Copie o arquivo de exemplo de variáveis de ambiente e preencha a senha:
-
-```bash
-cp .env.example .env
-```
-
-| Variável | Finalidade | Valor padrão |
-|---|---|---|
-| `DB_USERNAME` | usuário do PostgreSQL | `postgres` |
-| `DB_PASSWORD` | senha do PostgreSQL | (obrigatória) |
-| `DB_PORT` | porta do banco na máquina local | `5434` |
-
-Em seguida, inicie o contêiner:
+Na pasta do projeto, rode:
 
 ```bash
 docker compose up -d
 ```
 
-Em instalações que possuem apenas a versão antiga do Compose, use `docker-compose up -d`. O banco `notaFiscal_db` é criado automaticamente na primeira execução, e os dados são mantidos no volume `notafiscal_data`, de modo que persistem quando o contêiner é reiniciado ou recriado.
+Pronto: não precisa de mais nada. O banco `notaFiscal_db` é criado sozinho, com usuário `postgres`, senha `postgres` e porta `5434`. Os dados ficam guardados no volume do Docker (`notasfiscaisestagio_notafiscal_data`) e não se perdem se o contêiner for reiniciado.
 
-Para verificar o estado do contêiner: `docker ps`.
+Para usar outros valores, copie `.env.example` para `.env` e edite (`DB_USERNAME`, `DB_PASSWORD`, `DB_PORT`). A aplicação lê as mesmas variáveis.
+
+Para ver se o banco subiu: `docker ps`.
 
 ### 2. Aplicação
 
-A aplicação lê as credenciais das variáveis de ambiente `DB_USERNAME` e `DB_PASSWORD`, que devem ter os mesmos valores usados no passo anterior:
-
 ```bash
-export DB_USERNAME=postgres
-export DB_PASSWORD=sua_senha
 ./mvnw spring-boot:run
 ```
 
-No IntelliJ IDEA, defina as duas variáveis em *Run > Edit Configurations > Environment variables*.
-
-A URL de conexão está em `src/main/resources/application.properties` e aponta para a porta `5434`. Caso `DB_PORT` seja alterada, a porta da URL deve ser ajustada para o mesmo valor. A aplicação fica disponível em `http://localhost:8080`.
+A aplicação fica disponível em `http://localhost:8080`. Se você mudou o `.env`, exporte as mesmas variáveis (`export DB_PASSWORD=...`) antes de rodar.
 
 ### Observações
 
-- O Hibernate está configurado com `ddl-auto=update`: as tabelas são criadas na primeira execução e preservadas nas seguintes. Esse modo não corrige estruturas antigas. Se o banco foi criado por uma versão anterior do mapeamento, é necessário recriá-lo, removendo o volume com `docker compose down -v` (o que apaga todos os dados).
+- O Hibernate está configurado com `ddl-auto=update`: as tabelas são criadas na primeira execução e preservadas nas seguintes. Esse modo não corrige estruturas antigas. Se o banco foi criado por uma versão anterior do mapeamento, é necessário recriá-lo, removendo o volume com `docker compose down -v` (apaga todos os dados).
 - Duas aplicações não podem usar a porta 8080 ao mesmo tempo. Se ocorrer o erro `Endereço já em uso`, encerre a instância anterior.
 
 ## Endpoints

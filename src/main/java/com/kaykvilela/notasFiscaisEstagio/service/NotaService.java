@@ -26,7 +26,7 @@ import java.util.Set;
 //regra de negócio da entidade 'notaFiscal'
 public class NotaService {
 
-    //injeção dos objetos repository - acesso do banco
+    //injeção dos repository
     private final INotaRepository notaFiscalRepo;
     private final IClienteRepository clienteRepo;
     private final ItemService itemService;
@@ -55,20 +55,20 @@ public class NotaService {
         return converteEmNotaResponse(buscarPeloCodigo(codigoNota));
     }
 
-    //devolve as notas do cliente com esse código; 404 se o cliente não existir
+    //devolve as notas do cliente com esse código
     @Transactional(readOnly = true)
     public List<NotaFiscalDTO> buscarNotaPeloCodigoCliente(String codigoCliente) {
         buscaCliente(codigoCliente);
         return converteEmListaResponse(notaFiscalRepo.findByClienteCodigoOrderByCodigoNota(codigoCliente));
     }
 
-    //devolve as notas dos clientes cujo nome contém o texto informado (sem diferenciar maiúsculas)
+    //devolve as notas dos clientes com o nome que possui o texto informado (sem diferenciar maiúsculas)
     @Transactional(readOnly = true)
     public List<NotaFiscalDTO> buscarNotaPeloNomeCliente(String nomeCliente) {
         return converteEmListaResponse(notaFiscalRepo.findByClienteNomeContainingIgnoreCaseOrderByCodigoNota(nomeCliente));
     }
 
-    //cria a nota com o cliente e os itens informados
+    //cria a nota com o cliente e os itens referenciados
     @Transactional
     public NotaFiscalDTO createNota(NotaFiscalDTO request) {
         validaNotaFiscal(request);
@@ -87,20 +87,20 @@ public class NotaService {
         return converteEmNotaResponse(notaFiscalRepo.save(nota));
     }
 
-    //troca o cliente e substitui todos os itens da nota
+    //troca os dados do cliente e substitui todos os itens da nota
     @Transactional
     public NotaFiscalDTO atualizarNota(Integer codigoNota, NotaFiscalDTO request) {
         NotaFiscal nota = buscarPeloCodigo(codigoNota);
         validaNotaFiscal(request);
         nota.setCliente(buscaCliente(request.clienteCodigo()));
-        nota.getItensNota().clear(); // orphanRemoval apaga os antigos
-        notaFiscalRepo.flush(); // apaga antes de inserir, senão o código dos itens novos colide com os antigos
+        nota.getItensNota().clear();
+        notaFiscalRepo.flush(); // apaga antes de inserir, senão o código dos itens novos trava com os antigos
         preencheItens(nota, request.itens());
         atualizaTotais(nota);
         return converteEmNotaResponse(notaFiscalRepo.saveAndFlush(nota));
     }
 
-    //apaga a nota e, em cascata, os itens
+    //apaga a nota e os itens também em cascata
     @Transactional
     public void excluirNota(Integer codigoNota) {
         notaFiscalRepo.delete(buscarPeloCodigo(codigoNota));
@@ -114,7 +114,7 @@ public class NotaService {
         return resposta;
     }
 
-    // converte a NotaFiscal entidade em NotaFiscalDTO (cliente_nome e valor_total na nota)
+    // converte a NotaFiscal entidade em NotaFiscalDTO
     public NotaFiscalDTO converteEmNotaResponse(NotaFiscal nota) {
         List<ItemDTO> itens = new ArrayList<>();
         for (Item item : nota.getItensNota()) {
@@ -128,7 +128,7 @@ public class NotaService {
                 itens,
                 nota.getValorTotal());
     }
-
+    //testa as condiçoes para a nota ser considerada
     private void validaNotaFiscal(NotaFiscalDTO notaFiscalDTO) {
         if (notaFiscalDTO == null || notaFiscalDTO.clienteCodigo() == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Informe o código do cliente da nota");

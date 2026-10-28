@@ -1,16 +1,16 @@
-# Banco Postgres do projeto.
-# Uso: copie .env.example para .env, preencha usuário/senha e rode: docker compose up -d
+# Sobe o banco de dados (PostgreSQL) do projeto.
+# Funciona em qualquer máquina com Docker: docker compose up -d
+# Para trocar usuário, senha ou porta, copie .env.example para .env.
 services:
   db:
     image: postgres:17
     container_name: notafiscal-db
     restart: unless-stopped
     environment:
-      POSTGRES_USER: ${DB_USERNAME:?defina DB_USERNAME no .env}
-      POSTGRES_PASSWORD: ${DB_PASSWORD:?defina DB_PASSWORD no .env}
+      POSTGRES_USER: ${DB_USERNAME:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
       POSTGRES_DB: notaFiscal_db
     ports:
-      # porta do host configurável; o padrão acompanha a URL do application.properties
       - "${DB_PORT:-5434}:5432"
     volumes:
       - notafiscal_data:/var/lib/postgresql/data
@@ -21,6 +21,5 @@ services:
       retries: 10
 
 volumes:
+  # guarda os dados do banco mesmo se o contêiner for apagado
   notafiscal_data:
-    # mesmo nome do volume criado antes com 'docker run', para reaproveitar os dados
-    name: notafiscal_data
