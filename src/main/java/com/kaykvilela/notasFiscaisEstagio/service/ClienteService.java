@@ -13,18 +13,15 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-//gerencia o crud de clientes seguindo a regra de negócio
 public class ClienteService {
 
     private final IClienteRepository clientesRepository;
 
-    //aponta todos os clientes do banco
     @Transactional(readOnly = true)
     public List<ClienteDTO> buscaClientes() {
         return clientesRepository.findAll().stream().map(this::converteParaDTO).toList();
     }
 
-    //busca um cliente em específico pelo seu código
     @Transactional(readOnly = true)
     public ClienteDTO buscarPeloCodigo(String codigo) {
         return converteParaDTO(buscaEntidade(codigo));
@@ -69,7 +66,6 @@ public class ClienteService {
         return converteParaDTO(clientesRepository.save(cliente));
     }
 
-    //remove o cliente pelo codigo
     @Transactional
     public void deletaCliente(String codigo) {
         Cliente cliente = buscaEntidade(codigo);

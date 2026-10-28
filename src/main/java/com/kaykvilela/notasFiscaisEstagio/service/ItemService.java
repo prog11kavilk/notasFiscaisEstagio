@@ -21,19 +21,17 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-// regras de negócio dos itens de uma nota
 public class ItemService {
 
     private final ItemRepository itemRepo;
     private final INotaRepository notaRepo;
     private final IProdutoRepository produtoRepo;
 
-    // NotaService já depende do ItemService (montaItem), então esta ponta é lazy para não fechar um ciclo
+    // NotaService já depende do ItemService -> é lazy para não fechar um ciclo
     @Lazy
     @Autowired
     private NotaService notaService;
 
-    // lista os itens de uma nota
     @Transactional(readOnly = true)
     public List<ItemDTO> buscaItensDaNota(Integer codigoNota) {
         if (!notaRepo.existsByCodigoNota(codigoNota)) {
@@ -47,7 +45,6 @@ public class ItemService {
         return itensResposta;
     }
 
-    //busca um item pelo código da nota e pelo código do item
     @Transactional(readOnly = true)
     public ItemDTO buscarPeloCodigo(Integer codigoNota, Integer codigoItem) {
         return converteParaItemResponse(buscaEntidadeItem(codigoNota, codigoItem));
@@ -63,7 +60,7 @@ public class ItemService {
         Item item = montaItem(nota, dados.item(), dados.produtoCodigo(), dados.quantidade());
         nota.getItensNota().add(item);
         notaService.atualizaTotais(nota);
-        notaRepo.flush(); //fecha a conexão c/ o banco de notas
+        notaRepo.flush();
         return converteParaItemResponse(item);
     }
 
@@ -78,7 +75,6 @@ public class ItemService {
         return converteParaItemResponse(item);
     }
 
-    // remove um item da nota
     @Transactional
     public void deletaItem(Integer codigoNota, Integer codigoItem) {
         Item item = buscaEntidadeItem(codigoNota, codigoItem);
@@ -121,7 +117,6 @@ public class ItemService {
         item.setSubtotal(item.getProduto().getValor().multiply(BigDecimal.valueOf(item.getQuantidade())));
     }
 
-    // transforma o Item (entidade) no ItemDTO (o que a API devolve)
     public ItemDTO converteParaItemResponse(Item item) {
         return new ItemDTO(
                 item.getItem(),

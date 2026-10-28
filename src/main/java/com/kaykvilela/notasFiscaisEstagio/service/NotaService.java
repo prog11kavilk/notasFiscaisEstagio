@@ -23,10 +23,8 @@ import java.util.Set;
 @Service
 @RequiredArgsConstructor
 
-//regra de negócio da entidade 'notaFiscal'
 public class NotaService {
 
-    //injeção dos repository
     private final INotaRepository notaFiscalRepo;
     private final IClienteRepository clienteRepo;
     private final ItemService itemService;
@@ -43,19 +41,16 @@ public class NotaService {
                         HttpStatus.NOT_FOUND, "Nota não encontrada!\nCódigo: " + codigoNota));
     }
 
-    //lista todas as notas, cada uma com seus itens
     @Transactional(readOnly = true)
     public List<NotaFiscalDTO> listarNotas() {
         return converteEmListaResponse(notaFiscalRepo.findAllByOrderByCodigoNota());
     }
 
-    //devolve uma nota com seus itens
     @Transactional(readOnly = true)
     public NotaFiscalDTO devolveNota(Integer codigoNota) {
         return converteEmNotaResponse(buscarPeloCodigo(codigoNota));
     }
 
-    //devolve as notas do cliente com esse código
     @Transactional(readOnly = true)
     public List<NotaFiscalDTO> buscarNotaPeloCodigoCliente(String codigoCliente) {
         buscaCliente(codigoCliente);
@@ -68,7 +63,6 @@ public class NotaService {
         return converteEmListaResponse(notaFiscalRepo.findByClienteNomeContainingIgnoreCaseOrderByCodigoNota(nomeCliente));
     }
 
-    //cria a nota com o cliente e os itens referenciados
     @Transactional
     public NotaFiscalDTO createNota(NotaFiscalDTO request) {
         validaNotaFiscal(request);
@@ -100,7 +94,6 @@ public class NotaService {
         return converteEmNotaResponse(notaFiscalRepo.saveAndFlush(nota));
     }
 
-    //apaga a nota e os itens também em cascata
     @Transactional
     public void excluirNota(Integer codigoNota) {
         notaFiscalRepo.delete(buscarPeloCodigo(codigoNota));
@@ -114,7 +107,6 @@ public class NotaService {
         return resposta;
     }
 
-    // converte a NotaFiscal entidade em NotaFiscalDTO
     public NotaFiscalDTO converteEmNotaResponse(NotaFiscal nota) {
         List<ItemDTO> itens = new ArrayList<>();
         for (Item item : nota.getItensNota()) {
@@ -128,7 +120,6 @@ public class NotaService {
                 itens,
                 nota.getValorTotal());
     }
-    //testa as condiçoes para a nota ser considerada
     private void validaNotaFiscal(NotaFiscalDTO notaFiscalDTO) {
         if (notaFiscalDTO == null || notaFiscalDTO.clienteCodigo() == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Informe o código do cliente da nota");

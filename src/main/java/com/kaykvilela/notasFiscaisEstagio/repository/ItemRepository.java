@@ -9,7 +9,6 @@ import java.util.Optional;
 
 @Repository
 public interface ItemRepository extends JpaRepository<Item, Integer> {
-    //busca os itens pelo código da nota
     List<Item> findByNotaCodigoNota(Integer codigoNota);
 
     boolean existsByNotaCodigoNotaAndItem(Integer codigoNota, Integer item);

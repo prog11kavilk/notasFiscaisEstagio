@@ -39,6 +39,5 @@ public class NotaFiscal {
     // Uma nota tem vários itens. O ITEM é captado pela chave estrangeira, ao mapear pela nota.
     @OneToMany(mappedBy ="nota",cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("item ASC")
-    //salva como uma lista de itens para a nota referenciada
     private List<Item> itensNota = new ArrayList<>();
 }

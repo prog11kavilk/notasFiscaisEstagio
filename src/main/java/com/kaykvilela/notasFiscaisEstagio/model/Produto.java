@@ -14,7 +14,6 @@ import java.math.BigDecimal;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-//entidade de produto
 public class Produto {
 
     @Id
