@@ -12,7 +12,7 @@ SELECT n.codigo_nota   AS "codigoNota",
        p.nome          AS "produtoNome",
        p.valor         AS "valorUnitario",
        i.quantidade    AS "quantidade",
-       i.valor_total   AS "valorTotalItem",
+       i.valor_total   AS "subtotal",
        n.valor_total   AS "valorTotal"
 FROM nota_fiscal n
 JOIN clientes c ON c.id = n.cliente_codigo
@@ -31,7 +31,7 @@ SELECT n.codigo_nota   AS "codigoNota",
                     'produtoNome',   p.nome,
                     'valorUnitario', p.valor,
                     'quantidade',    i.quantidade,
-                    'valorTotal',    i.valor_total)
+                    'subtotal',      i.valor_total)
                 ORDER BY i.item) AS "itens",
        n.valor_total   AS "valorTotal"
 FROM nota_fiscal n

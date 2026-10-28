@@ -11,14 +11,14 @@ O modelo é composto por quatro entidades. Cada uma possui um identificador inte
 | Cliente | `clientes` | `codigo` (texto, único), `nome`, `cpf` (único) |
 | Produto | `produtos` | `codigo` (texto, único), `nome`, `valor` |
 | NotaFiscal | `nota_fiscal` | `codigo_nota` (inteiro, único), `data`, `valor_total`, cliente |
-| Item | `itens` | `item` (inteiro, único), `quantidade`, `valor_total`, nota, produto |
+| Item | `itens` | `item` (inteiro, único), `quantidade`, `valor_total` (subtotal do item), nota, produto |
 
 **Relacionamentos:** um cliente possui várias notas; uma nota possui vários itens; um produto pode aparecer em vários itens.
 
 **Regras de negócio:**
 
 - A data da nota é gerada pelo servidor no momento da criação.
-- O `valor_total` do item é o valor do produto multiplicado pela quantidade. O `valor_total` da nota é a soma dos itens e é recalculado sempre que um item é criado, alterado ou removido.
+- O `subtotal` do item (coluna `valor_total`) é o valor do produto multiplicado pela quantidade. O `valorTotal` da nota é a soma dos itens e é recalculado sempre que um item é criado, alterado ou removido.
 - Uma nota deve conter pelo menos um item; por isso, o último item de uma nota não pode ser removido.
 - Ao excluir uma nota, seus itens também são excluídos.
 - Um cliente com notas, ou um produto presente em itens, não pode ser excluído (erro 409).
@@ -126,8 +126,8 @@ Resposta:
   "clienteCodigo": "C1",
   "clienteNome": "Ana Souza",
   "itens": [
-    { "item": 1, "produtoCodigo": "P1", "produtoNome": "Teclado", "valorUnitario": 120.50, "quantidade": 2, "valorTotal": 241.00 },
-    { "item": 2, "produtoCodigo": "P2", "produtoNome": "Mouse", "valorUnitario": 50.00, "quantidade": 1, "valorTotal": 50.00 }
+    { "item": 1, "produtoCodigo": "P1", "produtoNome": "Teclado", "valorUnitario": 120.50, "quantidade": 2, "subtotal": 241.00 },
+    { "item": 2, "produtoCodigo": "P2", "produtoNome": "Mouse", "valorUnitario": 50.00, "quantidade": 1, "subtotal": 50.00 }
   ],
   "valorTotal": 291.00
 }

@@ -160,7 +160,7 @@ public class NotaService {
     public void atualizaTotais(NotaFiscal nota) {
         BigDecimal total = BigDecimal.ZERO;
         for (Item item : nota.getItensNota()) {
-            total = total.add(item.getValorTotal());
+            total = total.add(item.getSubtotal());
         }
         nota.setValorTotal(total);
     }

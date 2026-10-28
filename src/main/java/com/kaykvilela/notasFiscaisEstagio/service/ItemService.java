@@ -73,7 +73,7 @@ public class ItemService {
         Item item = buscaEntidadeItem(codigoNota, codigoItem);
         validaQuantidade(dados == null ? null : dados.quantidade());
         item.setQuantidade(dados.quantidade());
-        calculaValorTotal(item);
+        calculaSubtotal(item);
         notaService.atualizaTotais(item.getNota());
         return converteParaItemResponse(item);
     }
@@ -112,13 +112,13 @@ public class ItemService {
         item.setNota(nota);
         item.setProduto(produto);
         item.setQuantidade(quantidade);
-        calculaValorTotal(item);
+        calculaSubtotal(item);
         return item;
     }
 
-    //valor total = valor unitário (do produto) x quantidade
-    public void calculaValorTotal(Item item) {
-        item.setValorTotal(item.getProduto().getValor().multiply(BigDecimal.valueOf(item.getQuantidade())));
+    //subtotal = valor unitário (do produto) x quantidade
+    public void calculaSubtotal(Item item) {
+        item.setSubtotal(item.getProduto().getValor().multiply(BigDecimal.valueOf(item.getQuantidade())));
     }
 
     // transforma o Item (entidade) no ItemDTO (o que a API devolve)
@@ -129,7 +129,7 @@ public class ItemService {
                 item.getProduto().getNome(),
                 item.getProduto().getValor(),
                 item.getQuantidade(),
-                item.getValorTotal());
+                item.getSubtotal());
     }
 
     private Item buscaEntidadeItem(Integer codigoNota, Integer codigoItem) {

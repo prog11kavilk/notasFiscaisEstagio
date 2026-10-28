@@ -11,7 +11,7 @@ SELECT n.codigo_nota,
        p.nome          AS produto_nome,
        p.valor         AS valor_unitario,
        i.quantidade,
-       i.valor_total   AS valor_total_item,
+       i.valor_total   AS subtotal_item,
        n.valor_total   AS valor_total_nota
 FROM nota_fiscal n
 JOIN clientes c ON c.id = n.cliente_codigo

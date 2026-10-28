@@ -9,5 +9,5 @@ public record ItemDTO(Integer item,
                       String produtoNome,
                       BigDecimal valorUnitario,
                       Integer quantidade,
-                      BigDecimal valorTotal) {
+                      BigDecimal subtotal) {
 }

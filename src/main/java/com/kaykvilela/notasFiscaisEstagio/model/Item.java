@@ -37,6 +37,7 @@ public class Item {
     @Column(nullable = false)
     private Integer quantidade;
 
+    // a coluna continua valor_total no banco; no código chama subtotal para não confundir com o total da nota
     @Column(name = "valor_total", nullable = false)
-    private BigDecimal valorTotal;
+    private BigDecimal subtotal;
 }
